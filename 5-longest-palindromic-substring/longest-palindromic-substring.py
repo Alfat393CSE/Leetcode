@@ -4,28 +4,45 @@ class Solution(object):
         :type s: str
         :rtype: str
         """
-        if not s or len(s) == 0:
+        if not s:
             return ""
 
-        start = 0
-        end = 0
+        # Transform s into a new string with separators to handle even-length palindromes
+        t = '#' + '#'.join(s) + '#'
+        n = len(t)
+        p = [0] * n  # Array to store the radius of palindrome at each center
+        center = 0
+        right = 0
+        max_len = 0
+        max_center = 0
 
-        def expandAroundCenter(left, right):
-            while left >= 0 and right < len(s) and s[left] == s[right]:
-                left -= 1
-                right += 1
-            return right - left - 1  # length of the palindrome
+        for i in range(n):
+            mirror = 2 * center - i  # Mirror of i around current center
 
-        for i in range(len(s)):
-            len1 = expandAroundCenter(i, i)      # odd length palindrome
-            len2 = expandAroundCenter(i, i + 1)  # even length palindrome
-            max_len = max(len1, len2)
+            if i < right:
+                p[i] = min(right - i, p[mirror])
 
-            if max_len > (end - start):
-                start = i - (max_len - 1) // 2
-                end = i + max_len // 2
+            # Expand around center i
+            a = i + p[i] + 1
+            b = i - p[i] - 1
+            while a < n and b >= 0 and t[a] == t[b]:
+                p[i] += 1
+                a += 1
+                b -= 1
 
-        return s[start:end + 1]
+            # Update center and right boundary
+            if i + p[i] > right:
+                center = i
+                right = i + p[i]
+
+            # Track the maximum palindrome
+            if p[i] > max_len:
+                max_len = p[i]
+                max_center = i
+
+        # Extract the longest palindrome from the original string
+        start = (max_center - max_len) // 2
+        return s[start:start + max_len]
 
 # Example usage:
 solution = Solution()
