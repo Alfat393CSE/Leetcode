@@ -1,4 +1,4 @@
-# Alfat
+# Alfat Tasnim Hasan
 class Solution(object):
     def sumZero(self, n):
         """
