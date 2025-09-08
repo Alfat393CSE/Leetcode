@@ -35,3 +35,5 @@ print(Solution().isMatch("aa", "a"))     # False
 print(Solution().isMatch("aa", "a*"))    # True
 print(Solution().isMatch("ab", ".*"))    # True
 print(Solution().isMatch("mississippi", "mis*is*p*.")) # False
+
+#Alfat
