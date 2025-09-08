@@ -1,0 +1,38 @@
+class Solution(object):
+    def threeSum(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+        res = []
+        nums.sort()  # Sort the array first
+
+        for i in range(len(nums)):
+            # Skip duplicate values for the first element
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+
+            left, right = i + 1, len(nums) - 1
+            while left < right:
+                total = nums[i] + nums[left] + nums[right]
+                
+                if total == 0:
+                    res.append([nums[i], nums[left], nums[right]])
+                    left += 1
+                    right -= 1
+
+                    # Skip duplicates for the second element
+                    while left < right and nums[left] == nums[left - 1]:
+                        left += 1
+                    # Skip duplicates for the third element
+                    while left < right and nums[right] == nums[right + 1]:
+                        right -= 1
+
+                elif total < 0:
+                    left += 1  # Need a bigger number
+                else:
+                    right -= 1  # Need a smaller number
+
+        return res
+sol = Solution()
+print(sol.threeSum([-1,0,1,2,-1,-4]))  # Output: [[-1,-1,2], [-1,0,1]]
