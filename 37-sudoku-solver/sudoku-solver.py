@@ -9,7 +9,7 @@ class Solution(object):
         boxes = [set() for _ in range(9)]
         empties = []
 
-        # Initialize sets and track empty cells
+        # Initialize sets and candidates
         for r in range(9):
             for c in range(9):
                 val = board[r][c]
@@ -18,32 +18,40 @@ class Solution(object):
                 else:
                     rows[r].add(val)
                     cols[c].add(val)
-                    box_index = (r // 3) * 3 + (c // 3)
-                    boxes[box_index].add(val)
+                    boxes[(r // 3) * 3 + (c // 3)].add(val)
 
-        def backtrack(idx=0):
-            if idx == len(empties):
+        # Precompute candidate options for each empty cell
+        def get_candidates(r, c):
+            box_idx = (r // 3) * 3 + (c // 3)
+            return [ch for ch in map(str, range(1, 10))
+                    if ch not in rows[r] and ch not in cols[c] and ch not in boxes[box_idx]]
+
+        # Backtracking with MRV heuristic
+        def backtrack():
+            if not empties:
                 return True
 
-            r, c = empties[idx]
-            box_index = (r // 3) * 3 + (c // 3)
+            # Pick the empty cell with the fewest candidates (MRV)
+            empties.sort(key=lambda pos: len(get_candidates(*pos)))
+            r, c = empties.pop(0)
+            box_idx = (r // 3) * 3 + (c // 3)
 
-            for ch in map(str, range(1, 10)):
-                if ch not in rows[r] and ch not in cols[c] and ch not in boxes[box_index]:
-                    board[r][c] = ch
-                    rows[r].add(ch)
-                    cols[c].add(ch)
-                    boxes[box_index].add(ch)
+            for ch in get_candidates(r, c):
+                board[r][c] = ch
+                rows[r].add(ch)
+                cols[c].add(ch)
+                boxes[box_idx].add(ch)
 
-                    if backtrack(idx + 1):
-                        return True
+                if backtrack():
+                    return True
 
-                    # Undo (backtrack)
-                    board[r][c] = "."
-                    rows[r].remove(ch)
-                    cols[c].remove(ch)
-                    boxes[box_index].remove(ch)
+                # Undo move
+                board[r][c] = "."
+                rows[r].remove(ch)
+                cols[c].remove(ch)
+                boxes[box_idx].remove(ch)
 
+            empties.insert(0, (r, c))  # put back if failed
             return False
 
         backtrack()
