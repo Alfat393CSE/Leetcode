@@ -25,3 +25,6 @@ class Solution(object):
 
         # reverse the result since we built it backwards
         return ''.join(reversed(result))
+s = Solution()
+print(s.addBinary("11", "1"))      # Output: "100"
+print(s.addBinary("1010", "1011")) # Output: "10101"
